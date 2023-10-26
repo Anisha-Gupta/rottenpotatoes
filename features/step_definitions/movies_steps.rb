@@ -23,3 +23,9 @@ Then /I should see all the movies/ do
     step %{I should see "#{movie.title}"}
   end
 end
+
+Then /the director of "(.*)" should be "(.*)"/ do |e1, e2|
+  #  ensure that that e1 occurs before e2.
+  #  page.body is the entire content of the page as a string.
+  Movie.find_by_title(e1).director.should == e2
+end
