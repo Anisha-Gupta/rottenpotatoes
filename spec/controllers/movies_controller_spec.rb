@@ -1,20 +1,28 @@
 require 'rails_helper'
 
 RSpec.describe MoviesController, type: :controller do
-describe 'samedirector' do
-    it "should load movies of same director into @movies" do
-      get :samedirector, params: { id: @StarWars.id }
-      assigns(:movies).should include(@THX1138)
-    end
-    it "should not include movies of different director into @movies" do
-      get :samedirector, params: { id: @StarWars.id }
-      assigns(:movies).should_not include(@BladeRunner)
-    end
-    it 'flashes a message for a movie with no director info' do
-      movie = Movie.create(title: 'Movie Title', director: '')
+  describe 'samedirector' do
+    it 'redirects to movies_path when the movie has no director info' do
+      movie = Movie.create(title: 'Movie Title', director: '') # Create a movie with no director info
       get :samedirector, params: { id: movie.id }
-      expect(flash[:notice]).to include("'#{movie.title}' has no director info.")
+      expect(flash[:notice]).to eq("'#{movie.title}' has no director info.")
       expect(response).to redirect_to(movies_path)
+    end
+
+    it 'assigns movies with the same director' do
+      director = 'Director Name'
+      movie1 = Movie.create(title: 'Movie 1', director: director)
+      movie2 = Movie.create(title: 'Movie 2', director: director)
+
+      get :samedirector, params: { id: movie1.id }
+
+      expect(assigns(:movies)).to contain_exactly(movie1, movie2)
+    end
+
+    it 'renders the samedirector template' do
+      movie = Movie.create(title: 'Movie Title', director: 'Director Name')
+      get :samedirector, params: { id: movie.id }
+      expect(response).to render_template('samedirector')
     end
   end
 end
