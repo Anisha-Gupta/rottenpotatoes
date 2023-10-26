@@ -1,6 +1,13 @@
 require 'rails_helper'
 
 RSpec.describe MoviesController, type: :controller do
+  describe "GET 'show'" do
+    it "should be successful" do
+      movie1 = Movie.create(title: 'Star Wars', director: 'George Lucas')
+      get :show, {:id =>1}
+      response.should be_success
+    end
+  end
   describe 'samedirector' do
     it 'redirects to movies_path when the movie has no director info' do
       movie = Movie.create(title: 'Alien', director: '') # Create a movie with no director info
