@@ -1,6 +1,30 @@
 require 'rails_helper'
 
 RSpec.describe MoviesController, type: :controller do
+  describe 'create' do
+    it 'creates a new movie' do
+      movie_params = { title: 'Inception', director: 'Christopher Nolan' }
+      expect {
+        post :create, params: { movie: movie_params }
+      }.to change(Movie, :count).by(1)
+    end
+
+    it 'redirects to movies_path after creating a movie' do
+      movie_params = { title: 'Inception', director: 'Christopher Nolan' }
+
+      post :create, params: { movie: movie_params }
+
+      expect(response).to redirect_to(movies_path)
+    end
+
+    it 'sets a flash notice message' do
+      movie_params = { title: 'Inception', director: 'Christopher Nolan' }
+
+      post :create, params: { movie: movie_params }
+
+      expect(flash[:notice]).to eq("Inception was successfully created.")
+    end
+  end
   describe 'show' do
     it 'assigns the requested movie to @movie' do
       movie = Movie.create(title: 'Star Wars', director: 'George Lucas')
@@ -37,6 +61,31 @@ RSpec.describe MoviesController, type: :controller do
       movie = Movie.create(title: 'Blade Runner', director: 'Ridley Scott')
       get :samedirector, {:id=>1}
       expect(response).to render_template('samedirector')
+    end
+  end
+  describe 'destroy' do
+    it 'deletes a movie' do
+      movie = Movie.create(title: 'Inception', director: 'Christopher Nolan')
+
+      expect {
+        delete :destroy, {:id=>1}
+      }.to change(Movie, :count).by(-1)
+    end
+
+    it 'redirects to movies_path after deleting a movie' do
+      movie = Movie.create(title: 'Inception', director: 'Christopher Nolan')
+
+      delete :destroy, {:id=>1}
+
+      expect(response).to redirect_to(movies_path)
+    end
+
+    it 'sets a flash notice message' do
+      movie = Movie.create(title: 'Inception', director: 'Christopher Nolan')
+
+      delete :destroy, {:id=>1}
+
+      expect(flash[:notice]).to eq("Movie '#{movie.title}' deleted.")
     end
   end
 end
