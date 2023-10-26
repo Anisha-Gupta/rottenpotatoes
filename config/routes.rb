@@ -5,4 +5,5 @@ Rottenpotatoes::Application.routes.draw do
   # get ':controller/:action/:id'
   # post ':controller/:action/:id'
   get '/movies/samedirector/:id', to: 'movies#samedirector', as: :samedirector
+  resources :movies
 end
